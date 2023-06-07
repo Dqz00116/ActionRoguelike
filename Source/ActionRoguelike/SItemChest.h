@@ -19,6 +19,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
 	
+	
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 	
 protected:
@@ -26,8 +27,14 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* LidMesh;
+
+	UPROPERTY(VisibleAnywhere) 
+	class UStaticMeshComponent* GoodsMesh; 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UParticleSystemComponent* OpenEffectComp;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,4 +43,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	UFUNCTION(BlueprintCallable)
+	void SetBChestStatus(bool status);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetBChestStatus();
+
+private:
+
+	bool bChestStatus;
 };
