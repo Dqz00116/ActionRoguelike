@@ -23,7 +23,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* MovementComp;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UParticleSystemComponent* EffectComp;
 	
 	// Called when the game starts or when spawned
