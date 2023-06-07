@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -59,15 +60,31 @@ void ASCharacter::MoveRight(float Values)
 
 void ASCharacter::PrimaryAttack()
 {
+	
+	PlayAnimMontage(AttackAnim);
+	
 	const auto& HandLocation =  GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
 
-	FRotator ControlRotation =  GetControlRotation();
-	ControlRotation.Pitch = 0.0f;
-	
-	const auto& SpawnTM = FTransform(ControlRotation , HandLocation);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FVector CameraCompStartLoc = CameraComponent->GetComponentLocation();
+	FVector CameraCompVct = CameraComponent->GetComponentRotation().Vector();
+	FVector CameraCompEndLoc = CameraCompStartLoc + CameraCompVct * 114514114514;
+	FHitResult HitResult;
+	TArray<AActor*> IgnoreActors;
 
+	bool bIsHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), CameraCompStartLoc, CameraCompEndLoc, TraceTypeQuery1, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+
+	FRotator TargetRotation;
+	FVector VectorFromCameraToHitLoc;
+	
+	VectorFromCameraToHitLoc = ( bIsHit? HitResult.Location : CameraCompEndLoc )  - HandLocation;
+	TargetRotation = VectorFromCameraToHitLoc.Rotation();
+	
+	const auto& SpawnTM = FTransform(TargetRotation , HandLocation);
+	
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Instigator = this;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
 	
 }
@@ -113,5 +130,6 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 }
 
