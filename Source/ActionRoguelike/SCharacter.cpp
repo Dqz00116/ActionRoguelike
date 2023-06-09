@@ -65,30 +65,11 @@ void ASCharacter::PrimaryAttack()
 {
 	
 	PlayAnimMontage(AttackAnim);
-	
-	const auto& HandLocation =  GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
 
-	FVector CameraCompStartLoc = CameraComponent->GetComponentLocation();
-	FVector CameraCompVct = CameraComponent->GetComponentRotation().Vector();
-	FVector CameraCompEndLoc = CameraCompStartLoc + CameraCompVct * 114514114514;
-	FHitResult HitResult;
-	TArray<AActor*> IgnoreActors;
-
-	bool bIsHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), CameraCompStartLoc, CameraCompEndLoc, TraceTypeQuery1, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
-
-	FRotator TargetRotation;
-	FVector VectorFromCameraToHitLoc;
-	
-	VectorFromCameraToHitLoc = ( bIsHit? HitResult.Location : CameraCompEndLoc )  - HandLocation;
-	TargetRotation = VectorFromCameraToHitLoc.Rotation();
-	
-	const auto& SpawnTM = FTransform(TargetRotation , HandLocation);
-	
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Instigator = this;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+	if(InteractionComp)
+	{
+		InteractionComp->PrimaryAttack(ProjectileClass);
+	}
 	
 }
 

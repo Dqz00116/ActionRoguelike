@@ -25,5 +25,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Dash();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Attack();
 	
 };

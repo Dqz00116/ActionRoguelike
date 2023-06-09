@@ -4,7 +4,11 @@
 #include "SInteractionComponent.h"
 
 #include "DrawDebugHelpers.h"
+#include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values for this component's properties
@@ -89,4 +93,45 @@ void USInteractionComponent::PrimaryInteract()
 	
 	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.f, 0, 2.f);
 
+}
+
+void USInteractionComponent::PrimaryDash()
+{
+	
+	
+	
+}
+
+void USInteractionComponent::PrimaryAttack(TSubclassOf<AActor> ProjectileClass)
+{
+	const auto& MyOwner = Cast<ASCharacter>(GetOwner());
+	if(MyOwner)
+	{
+		const auto& HandLocation =  MyOwner->GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+		UCameraComponent* CameraComp =Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+
+		FVector TrackLineStartLoc = CameraComp->GetComponentLocation();
+		FVector TrackLineVec = CameraComp->GetComponentRotation().Vector();
+
+		FVector TrackLineEndLoc = TrackLineStartLoc + TrackLineVec * 114514114514;
+		FHitResult HitResult;
+		TArray<AActor*> IgnoreActors;
+
+		bool bIsHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), TrackLineStartLoc, TrackLineEndLoc, TraceTypeQuery1, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+
+		FRotator TargetRot;
+		FVector TargetVec;
+
+		TargetVec = ( bIsHit ? HitResult.Location : TrackLineEndLoc) - HandLocation;
+		TargetRot = TargetVec.Rotation();
+
+		const auto& SpawnTM = FTransform(TargetRot, HandLocation);
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Instigator = MyOwner;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+	}
+	
 }

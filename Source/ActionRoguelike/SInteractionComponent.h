@@ -15,6 +15,10 @@ class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 public:	
 	void PrimaryInteract();
 
+	void PrimaryDash();
+
+	void PrimaryAttack(TSubclassOf<AActor> ProjectileClass);
+
 	// Sets default values for this component's properties
 	USInteractionComponent();
 
