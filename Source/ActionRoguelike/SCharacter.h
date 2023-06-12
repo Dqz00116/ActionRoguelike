@@ -43,6 +43,7 @@ protected:
 
 	void PrimaryAttack();
 	void PrimaryInteract();
+	void PrimaryDash();
 	
 public:	
 	// Called every frame

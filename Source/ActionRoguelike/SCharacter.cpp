@@ -81,6 +81,14 @@ void ASCharacter::PrimaryInteract()
 	}
 }
 
+void ASCharacter::PrimaryDash()
+{
+	if(InteractionComp)
+	{
+		InteractionComp->PrimaryDash();
+	}
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -115,5 +123,6 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
+	PlayerInputComponent->BindAction("PrimaryDash", IE_Pressed, this, &ASCharacter::PrimaryDash);
 }
 

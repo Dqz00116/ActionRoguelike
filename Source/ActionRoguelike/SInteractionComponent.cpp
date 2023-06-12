@@ -97,9 +97,28 @@ void USInteractionComponent::PrimaryInteract()
 
 void USInteractionComponent::PrimaryDash()
 {
-	
-	
-	
+	const auto& MyOwner = Cast<ASCharacter>(GetOwner());
+	if(MyOwner)
+	{
+		const auto& HandLocation =  MyOwner->GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
+		UCameraComponent* CameraComp =Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+
+		FVector TrackLineStartLoc = CameraComp->GetComponentLocation();
+		FVector TrackLineVec = CameraComp->GetComponentRotation().Vector();
+
+		FVector TrackLineEndLoc = TrackLineStartLoc + TrackLineVec * 114514114514;
+		FHitResult HitResult;
+		TArray<AActor*> IgnoreActors;
+
+		bool bIsHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), TrackLineStartLoc, TrackLineEndLoc, TraceTypeQuery1, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+		
+		FVector TargetLoc;
+
+		TargetLoc = bIsHit ? HitResult.Location : MyOwner->GetActorLocation();
+		
+
+		MyOwner->TeleportTo(TargetLoc, MyOwner->GetActorRotation(), false, false);
+	}
 }
 
 void USInteractionComponent::PrimaryAttack(TSubclassOf<AActor> ProjectileClass)
