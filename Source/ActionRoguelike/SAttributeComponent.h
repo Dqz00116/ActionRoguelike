@@ -31,5 +31,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Atttibutes")
 	bool ApplyHealthChange(float Delta);
 
-		
+	UFUNCTION(BlueprintCallable, Category="Atttibutes")
+	float GetDamage();
 };

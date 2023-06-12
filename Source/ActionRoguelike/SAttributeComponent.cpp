@@ -3,6 +3,8 @@
 
 #include "SAttributeComponent.h"
 
+#include "SCharacter.h"
+
 // Sets default values for this component's properties
 USAttributeComponent::USAttributeComponent()
 {
@@ -26,8 +28,18 @@ bool USAttributeComponent::ApplyHealthChange(float Delta)
 	this->Health = HealthNow<0 ?  0 : HealthNow;
 	
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+
+	if(HealthNow<0)
+	{
+		GetOwner()->Destroy();
+	}
 		
 	return true;
+}
+
+float USAttributeComponent::GetDamage()
+{
+	return 100.f - this->Health;
 }
 
 
